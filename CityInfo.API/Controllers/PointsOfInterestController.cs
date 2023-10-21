@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace CityInfo.API.Controllers
 {
     [Route("api/v{version:apiVersion}/cities/{cityId}/pointsofinterest")]
-    [Authorize(Policy = "MustBeFromAntwerp")]
+    //[Authorize(Policy = "MustBeFromAntwerp")]
     [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {
@@ -55,8 +56,10 @@ namespace CityInfo.API.Controllers
 
             var pointsOfInterestForCity = await _cityInfoRepository
                 .GetPointsOfInterestForCityAsync(cityId);
-
-            return Ok(_mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
+            var result = _mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity);
+            //return Ok(new { result1 = result, ancd = 1 });
+            //return Ok("asjdbaskjd");
+            return Ok(result);
         }
 
         [HttpGet("{pointofinterestid}", Name = "GetPointOfInterest")]

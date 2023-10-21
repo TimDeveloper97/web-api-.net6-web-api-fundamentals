@@ -1,11 +1,16 @@
 using CityInfo.API;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 
@@ -25,8 +30,9 @@ builder.Host.UseSerilog();
 
 builder.Services.AddControllers(options =>
 {
-    options.ReturnHttpNotAcceptable = true;
-}).AddNewtonsoftJson()
+    //options.ReturnHttpNotAcceptable = true;
+})
+.AddNewtonsoftJson()
 .AddXmlDataContractSerializerFormatters();
     
 
@@ -37,25 +43,37 @@ builder.Services.AddSwaggerGen(setupAction =>
 {
     var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-
+    setupAction.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
     setupAction.IncludeXmlComments(xmlCommentsFullPath);
 
-    setupAction.AddSecurityDefinition("CityInfoApiBearerAuth", new OpenApiSecurityScheme()
+    //jwt => put token
+    setupAction.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Type = SecuritySchemeType.Http,
+        Description = "JWT Authorization header using Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer",
-        Description = "Input a valid token to access this API"
     });
+
+    //setupAction.OperationFilter<SwaggerDefaultValues>();
 
     setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference {
+                Reference = new OpenApiReference
+                {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "CityInfoApiBearerAuth" }
-            }, new List<string>() }
+                    Id = "Bearer"
+                },
+                Scheme = "0auth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
     });
 });
 
@@ -95,19 +113,37 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("MustBeFromAntwerp", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("city", "Antwerp");
-    });
+    //options.AddPolicy("MustBeFromAntwerp", policy =>
+    //{
+    //    policy.RequireAuthenticatedUser();
+    //    policy.RequireClaim("city", "Antwerp");
+    //});
 });
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        x => x.AllowAnyHeader()
+        .AllowAnyOrigin()
+        .AllowAnyMethod());
+});
 builder.Services.AddApiVersioning(setupAction =>
 {
     setupAction.AssumeDefaultVersionWhenUnspecified = true;
-    setupAction.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    setupAction.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
     setupAction.ReportApiVersions = true;
+    //setupAction.ApiVersionReader = ApiVersionReader.Combine(
+    //    new QueryStringApiVersionReader("api-version"),
+    //    new QueryStringApiVersionReader("X-Version"),
+    //    new MediaTypeApiVersionReader("ver")
+    //    );
 });
+builder.Services.AddVersionedApiExplorer(
+    options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        //options.SubstituteApiVersionInUrl = true;
+    });
+
 
 var app = builder.Build();
 

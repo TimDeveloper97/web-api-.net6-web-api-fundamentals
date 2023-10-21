@@ -9,21 +9,21 @@ namespace CityInfo.API.Controllers
 {
     [ApiController]
     [Authorize]
-    [ApiVersion("1.0", Deprecated = true)]
-    //[ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/cities")]
-    public class CitiesController : ControllerBase
+    //[ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    public class CitiesV2Controller : ControllerBase
     {
         private readonly ICityInfoRepository _cityInfoRepository;
         private readonly IMapper _mapper;
         const int maxCitiesPageSize = 20;
 
-        public CitiesController(ICityInfoRepository cityInfoRepository,
+        public CitiesV2Controller(ICityInfoRepository cityInfoRepository,
             IMapper mapper)
         {
-            _cityInfoRepository = cityInfoRepository ?? 
+            _cityInfoRepository = cityInfoRepository ??
                 throw new ArgumentNullException(nameof(cityInfoRepository));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -42,7 +42,7 @@ namespace CityInfo.API.Controllers
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(paginationMetadata));
 
-            return Ok(_mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));       
+            return Ok(_mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
         }
 
         /// <summary>

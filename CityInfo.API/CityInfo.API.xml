@@ -13,6 +13,15 @@
             <returns>An IActionResult</returns>
             <response code="200">Returns the requested city</response>
         </member>
+        <member name="M:CityInfo.API.Controllers.CitiesV2Controller.GetCity(System.Int32,System.Boolean)">
+            <summary>
+            Get a city by id
+            </summary>
+            <param name="id">The id of the city to get</param>
+            <param name="includePointsOfInterest">Whether or not to include the points of interest</param>
+            <returns>An IActionResult</returns>
+            <response code="200">Returns the requested city</response>
+        </member>
         <member name="T:CityInfo.API.Models.CityWithoutPointsOfInterestDto">
             <summary>
             A DTO for a city without points of interest
