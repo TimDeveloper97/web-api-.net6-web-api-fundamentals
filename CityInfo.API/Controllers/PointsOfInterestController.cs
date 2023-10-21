@@ -111,7 +111,7 @@ namespace CityInfo.API.Controllers
                  createdPointOfInterestToReturn);
         }
 
-        [HttpPut("{pointofinterestid}")]
+        [HttpPut("{pointOfInterestId}")]
         public async Task<ActionResult> UpdatePointOfInterest(int cityId, int pointOfInterestId,
             PointOfInterestForUpdateDto pointOfInterest)
         {
@@ -135,7 +135,7 @@ namespace CityInfo.API.Controllers
         }
 
 
-        [HttpPatch("{pointofinterestid}")]
+        [HttpPatch("{pointOfInterestId}")]
         public async Task<ActionResult> PartiallyUpdatePointOfInterest(
             int cityId, int pointOfInterestId,
             JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)

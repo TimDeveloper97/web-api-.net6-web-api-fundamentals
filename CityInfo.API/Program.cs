@@ -55,7 +55,7 @@ builder.Services.AddSwaggerGen(setupAction =>
         Description = "JWT Authorization header using Bearer scheme.",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
     });
 
@@ -78,6 +78,23 @@ builder.Services.AddSwaggerGen(setupAction =>
             new List<string>()
         }
     });
+    //setupAction.AddSecurityDefinition("CityInfoApiBearerAuth", new OpenApiSecurityScheme()
+    //{
+    //    Type = SecuritySchemeType.Http,
+    //    Scheme = "Bearer",
+    //    Description = "Input a valid token to access this API"
+    //});
+
+    //setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //{
+    //    {
+    //        new OpenApiSecurityScheme
+    //        {
+    //            Reference = new OpenApiReference {
+    //                Type = ReferenceType.SecurityScheme,
+    //                Id = "CityInfoApiBearerAuth" }
+    //        }, new List<string>() }
+    //});
 });
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
