@@ -10,7 +10,7 @@ namespace CityInfo.API.Controllers
 {
     [Route("api/v{version:apiVersion}/cities/{cityId}/pointsofinterest")]
     //[Authorize(Policy = "MustBeFromAntwerp")]
-    [ApiVersion("2.0")]
+    
     [ApiVersion("1.0")]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
@@ -173,6 +173,7 @@ namespace CityInfo.API.Controllers
             return NoContent();
         }
 
+        [ApiVersion("2.0")]
         [HttpDelete("{pointOfInterestId}")]
         public async Task<ActionResult> DeletePointOfInterest(
             int cityId, int pointOfInterestId)

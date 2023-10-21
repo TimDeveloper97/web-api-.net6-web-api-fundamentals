@@ -43,8 +43,11 @@ builder.Services.AddSwaggerGen(setupAction =>
 {
     var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-    setupAction.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
     setupAction.IncludeXmlComments(xmlCommentsFullPath);
+
+    //apply when have many version
+    setupAction.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+    setupAction.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API", Version = "v2" });
 
     //jwt => put token
     setupAction.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -141,7 +144,7 @@ builder.Services.AddVersionedApiExplorer(
     options =>
     {
         options.GroupNameFormat = "'v'VVV";
-        //options.SubstituteApiVersionInUrl = true;
+        options.SubstituteApiVersionInUrl = true;
     });
 
 
@@ -151,7 +154,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "API V2");
+    });
 }
 
 app.UseHttpsRedirection();

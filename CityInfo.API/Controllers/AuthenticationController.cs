@@ -8,6 +8,8 @@ using System.Text;
 namespace CityInfo.API.Controllers
 {
     [Route("api/authentication")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
